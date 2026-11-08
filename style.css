@@ -1,0 +1,202 @@
+/* =======================================================
+   KDM NETWORK - DARK NEON THEME (DASHBOARD ANALYTICS)
+   ======================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    /* Tema Gelap Khas Dashboard Analitik */
+    --bg-main: #0B0E27;       /* Biru Dongker Sangat Gelap (Background) */
+    --bg-card: #141838;       /* Biru Dongker Agak Terang (Kartu) */
+    --sidebar-bg: #101330;    /* Sidebar */
+    --border-light: #202654;  /* Garis pemisah */
+    
+    /* Warna Neon (Cyan & Magenta / Pink) */
+    --primary: #E6007A;       /* Pink Neon (Berdasarkan gambar) */
+    --primary-hover: #FF1493;
+    --primary-light: rgba(230, 0, 122, 0.15);
+    
+    /* Warna Teks */
+    --text-dark: #FFFFFF;     /* Teks Utama Jadi Putih */
+    --text-muted: #8E96B7;    /* Teks Sekunder */
+    
+    /* Status Colors */
+    --success: #00FFD1;       /* Cyan/Hijau Neon */
+    --success-light: rgba(0, 255, 209, 0.1);
+    --danger: #FF3366;
+    --danger-light: rgba(255, 51, 102, 0.1);
+    --warning: #FF9F00;       /* Orange */
+    
+    /* Shadow & Radius */
+    --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.4);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --transition: all 0.3s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background-color: var(--bg-main); color: var(--text-dark); line-height: 1.6; }
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* SIDEBAR */
+.sidebar { width: 260px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; padding: 24px 16px; transition: var(--transition); z-index: 100; border-right: 1px solid var(--border-light); }
+.sidebar-header { display: flex; align-items: center; justify-content: space-between; font-size: 22px; font-weight: 800; color: #00FFD1; padding: 0 12px 32px 12px; }
+.close-sidebar { display: none; color: #fff; cursor: pointer; font-size: 24px; }
+.nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.nav-links li a { display: flex; align-items: center; gap: 14px; padding: 12px 16px; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 15px; border-radius: var(--radius-md); transition: var(--transition); }
+.nav-links li.active a, .nav-links li a:hover { background-color: var(--primary); color: #ffffff; box-shadow: 0 0 15px rgba(230, 0, 122, 0.5); }
+.nav-links li.logout { margin-top: auto; }
+.nav-links li.logout a { color: var(--danger); }
+.nav-links li.logout a:hover { background-color: var(--danger-light); }
+
+/* TOPBAR */
+.main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
+.topbar { height: 70px; background: var(--bg-card); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+.topbar-left { display: flex; align-items: center; gap: 24px; }
+.menu-toggle { font-size: 22px; cursor: pointer; color: var(--text-dark); }
+.topbar-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: #00FFD1; }
+.user-profile { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+.avatar { width: 40px; height: 40px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+/* KONTEN & KARTU STATISTIK */
+.content-area { padding: 32px; max-width: 1200px; margin: 0 auto; width: 100%; }
+.page-section { display: none; animation: fadeIn 0.4s ease-out; }
+.page-section.active { display: block; }
+h2 { font-size: 24px; font-weight: 700; margin-bottom: 24px; color: var(--text-dark); }
+.cards-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.stat-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 24px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-md); transition: var(--transition); }
+.stat-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+.icon-box { width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.icon-box.blue { background: rgba(0, 255, 209, 0.1); color: #00FFD1; }
+.icon-box.red { background: rgba(255, 51, 102, 0.1); color: #FF3366; }
+.icon-box.green { background: rgba(255, 159, 0, 0.1); color: #FF9F00; }
+.stat-card h3 { font-size: 14px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+.stat-card .number { font-size: 32px; font-weight: 800; color: var(--text-dark); margin-top: 4px; }
+
+/* LAYOUT GRAFIK BARU */
+.charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 24px; }
+.chart-box { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; }
+.chart-box h3 { font-size: 16px; color: var(--text-dark); margin-bottom: 20px; }
+.chart-container { position: relative; height: 300px; width: 100%; }
+
+/* FORM INPUTAN */
+.card-white { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 32px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 24px; }
+.input-group { display: flex; flex-direction: column; gap: 8px; }
+.input-group.full-width { grid-column: 1 / -1; margin-bottom: 24px; }
+label { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+input, select, textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--border-light); border-radius: var(--radius-md); background: var(--bg-main); font-size: 15px; color: var(--text-dark); transition: var(--transition); outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); background: var(--bg-card); }
+input[type="file"] { padding: 10px; background: var(--bg-main); }
+
+/* TOMBOL */
+button { cursor: pointer; border: none; outline: none; font-family: inherit; transition: var(--transition); }
+.btn-primary { background: var(--primary); color: white; padding: 14px 24px; border-radius: var(--radius-md); font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(230, 0, 122, 0.4); }
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(230, 0, 122, 0.6); }
+.btn-location { background: var(--bg-main); color: var(--text-dark); padding: 14px 20px; border-radius: var(--radius-md); font-weight: 600; border: 1px solid var(--border-light); }
+.btn-location:hover { background: var(--sidebar-bg); }
+
+/* LOGIN */
+#login-screen { justify-content: center; align-items: center; background: radial-gradient(circle at center, var(--bg-card) 0%, var(--bg-main) 100%); }
+.login-card { background: var(--bg-card); padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: var(--shadow-md); border: 1px solid var(--border-light); text-align: center; }
+.login-card .logo-area i { font-size: 48px; color: #00FFD1; margin-bottom: 16px; filter: drop-shadow(0 0 10px rgba(0, 255, 209, 0.5)); }
+.login-card .btn-primary { width: 100%; margin-top: 24px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 768px) {
+    .sidebar { position: fixed; left: -260px; height: 100%; box-shadow: 10px 0 15px rgba(0,0,0,0.5); }
+    .sidebar.mobile-active { left: 0; }
+    .close-sidebar { display: block; }
+    .content-area { padding: 16px; }
+    .cards-container, .charts-grid { grid-template-columns: 1fr; }
+    
+    /* JURUS MERAPIKAN HEADER (TOPBAR) KHUSUS HP */
+    .topbar { padding: 0 16px; }
+    .topbar-logo img { width: 35px !important; } /* Perkecil logo sedikit */
+    
+    /* Sembunyikan teks alamat panjang di HP agar tidak bertumpuk */
+    .topbar-logo div span:last-child { display: none !important; }
+    
+    /* Pastikan teks KDM Network sejajar dalam 1 baris */
+    .topbar-logo div span:first-child { font-size: 16px !important; white-space: nowrap; margin-top: 2px; }
+    
+    /* Sembunyikan sapaan nama panjang, sisakan ikon foto profil saja */
+    .user-profile span { display: none !important; }
+}
+/* ========================================= */
+/* 8. TABEL DATA PELANGGAN (DARK THEME)      */
+/* ========================================= */
+.premium-table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; }
+.premium-table th { 
+    background-color: var(--sidebar-bg); 
+    color: var(--success); /* Warna Cyan Neon */
+    padding: 16px; 
+    font-weight: 700; 
+    border-bottom: 2px solid var(--border-light); 
+    white-space: nowrap; 
+}
+.premium-table td { 
+    padding: 16px; 
+    border-bottom: 1px solid var(--border-light); 
+    color: var(--text-dark); 
+    vertical-align: middle; 
+}
+.premium-table tbody tr:hover { 
+    background-color: rgba(0, 255, 209, 0.05); /* Efek nyala saat mouse lewat */
+}
+.badge-aktif { 
+    background: var(--success-light); 
+    color: var(--success); 
+    padding: 6px 12px; 
+    border-radius: 20px; 
+    font-size: 12px; 
+    font-weight: 700; 
+    border: 1px solid var(--success); 
+}
+
+
+.badge-isolir { 
+    background: var(--danger-light); 
+    color: var(--danger); 
+    padding: 6px 12px; 
+    border-radius: 20px; 
+    font-size: 12px; 
+    font-weight: 700; 
+    border: 1px solid var(--danger); 
+}
+
+/* ========================================= */
+/* MENGHILANGKAN BACKGROUND PUTIH AUTOFILL   */
+/* ========================================= */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 50px #141838 inset !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+
+/* ========================================= */
+/* JURUS FULL LAYAR UNTUK PORTAL BAYAR DI HP */
+/* ========================================= */
+@media (max-width: 480px) {
+    #customer-pay-screen {
+        padding: 0 !important; 
+        align-items: flex-start !important; 
+    }
+    
+    #customer-pay-screen .card-white {
+        max-width: 100% !important;
+        width: 100% !important;
+        min-height: 100vh; 
+        border-radius: 0 !important; 
+        border-top: none !important;
+        padding: 32px 20px !important; 
+        box-shadow: none !important;
+        display: flex;
+        flex-direction: column;
+    }
+}

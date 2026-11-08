@@ -1,0 +1,30 @@
+# ============================================================
+# PENGAMAN NETLIFY - KDM Network
+# ------------------------------------------------------------
+# File ini dibaca otomatis oleh Netlify. Tugasnya: kalau ada file
+# sensitif (backup database, catatan audit, file zip) yang tidak
+# sengaja ikut terupload, aksesnya ditutup dan dibalas 404.
+#
+# Tidak perlu diubah. Cukup ikutkan file ini saat upload.
+# ============================================================
+
+# Backup database & skrip SQL
+/*.sql      /404.html  404
+
+# File arsip / backup
+/*.zip      /404.html  404
+/*.rar      /404.html  404
+/*.bak      /404.html  404
+
+# Catatan & dokumentasi internal
+# (robots.txt sengaja TIDAK diblokir supaya aturan SEO tetap bisa dipakai)
+/*.md       /404.html  404
+
+# File konfigurasi & rahasia
+/*.env      /404.html  404
+/*.log      /404.html  404
+/*.yml      /404.html  404
+
+# File pengunci editor (VS Code, dsb.)
+/.vscode/*  /404.html  404
+/.git/*     /404.html  404

@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B0E27">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>KDM Network - WiFi Management</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ================= LAYAR LOGIN ================= -->
+    <div id="login-screen" class="screen active">
+        <div class="login-card">
+            <div class="logo-area">
+                <i class="fa-solid fa-wifi"></i>
+                <h2 style="margin-bottom: 10px;">KDM Network</h2>
+                <p style="margin-top: 6px; margin-bottom: 25px;">Sistem Manajemen Pelanggan</p>
+            </div>
+           <form id="loginForm" onsubmit="loginAsli(event)">
+                <div class="input-group">
+                    <!-- Berubah jadi format Email -->
+                    <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password Rahasia" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn-primary" id="btn-login-utama">Masuk Aplikasi</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= LAYAR DASHBOARD ================= -->
+    <div id="dashboard-screen" class="screen">
+        
+        <!-- Sidebar Navigation (SUDAH BERSIH TIDAK DOBEL) -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-wifi"></i> <span>KDM Admin</span>
+                <i class="fa-solid fa-times close-sidebar" id="closeSidebar"></i>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#" onclick="showPage('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#" onclick="showPage('form-pelanggan')"><i class="fa-solid fa-user-plus"></i> Pelanggan Baru</a></li>
+                <li><a href="#" onclick="showPage('data-pelanggan')"><i class="fa-solid fa-users"></i> Data Pelanggan</a></li>
+                <li id="menu-cetak-nota"><a href="#" onclick="showPage('cetak-nota')"><i class="fa-solid fa-print"></i> Cetak Nota</a></li>
+                <li><a href="#" onclick="showPage('pembayaran')"><i class="fa-solid fa-wallet"></i> Pembayaran</a></li>
+                <li id="tombol-pengaturan"><a href="#" onclick="showPage('pengaturan')"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+                <li id="menu-log">
+            <a href="#" onclick="showPage('log-aktivitas')"><i class="fa-solid fa-clock-rotate-left"></i> Log Aktivitas</a>
+        </li>
+                <li class="logout"><a href="#" onclick="keluarAplikasi(); return false;"><i class="fa-solid fa-sign-out-alt"></i> Keluar</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <div class="menu-toggle" id="menuToggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                    <div class="topbar-logo" style="display: flex; align-items: center; gap: 12px;">
+                <!-- Mengambil gambar dari folder Kakak -->
+                <img src="logo.png" alt="Logo KDM" style="width: 45px; height: auto; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,255,209,0.3));">
+                
+                <!-- Teks dibuat bertumpuk atas bawah -->
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 19px; font-weight: 800; color: #ffffff; line-height: 1.1; letter-spacing: 0.5px;">KDM Network</span>
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: 500; margin-top: 3px;">Dsn. Krajan, Kedemungan Kejayan Pasuruan</span>
+                </div>
+            </div>
+                </div>
+                <div class="user-profile">
+                    <span id="userNameDisplay">Halo, Bosku!</span>
+                    <div class="avatar"><i class="fa-solid fa-user-tie"></i></div>
+                </div>
+            </header>
+
+            <!-- Konten Dinamis -->
+            <div class="content-area">
+                
+                <!-- 1. Halaman Dashboard -->
+                <div id="page-dashboard" class="page-section active">
+                    <h2>Ringkasan Hari Ini</h2>
+                    <div class="cards-container">
+        
+       <!-- Kartu 1: Total Aktif -->
+        <div class="stat-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
+            <div class="stat-icon" style="background: rgba(0, 255, 209, 0.15); color: #00FFD1; display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; border-radius: 18px; font-size: 32px;">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3 style="font-size: 15px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Total Aktif</h3>
+                <h2 id="total-aktif" style="font-size: 48px; color: #fff; font-weight: 800; margin: 0; line-height: 1;">0</h2>
+            </div>
+        </div>
+
+        <!-- Kartu 2: Isolir -->
+        <div class="stat-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
+            <div class="stat-icon" style="background: rgba(255, 59, 105, 0.15); color: #FF3B69; display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; border-radius: 18px; font-size: 32px;">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <div class="stat-info">
+                <h3 style="font-size: 15px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Isolir</h3>
+                <h2 id="total-isolir" style="font-size: 48px; color: #fff; font-weight: 800; margin: 0; line-height: 1;">0</h2>
+            </div>
+        </div>
+
+        <!-- Kartu 3: Persentase Lunas (Grid 4 Tanggal) -->
+        <div class="stat-card" style="padding: 18px;">
+            <div class="stat-info" style="width: 100%;">
+                <!-- Teks judul dibuat rata tengah -->
+                <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-align: center; font-weight: 700; letter-spacing: 1px;">PERSENTASE LUNAS</h3>
+                
+                <!-- Kotak 1 Bungkus Dibagi 4 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <span style="font-size: 10px; color: #94a3b8; display: block; margin-bottom: 3px;">Tgl 1</span>
+                        <strong id="lunas-tgl1" style="font-size: 16px; color: #fff;">0%</strong>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <span style="font-size: 10px; color: #94a3b8; display: block; margin-bottom: 3px;">Tgl 10</span>
+                        <strong id="lunas-tgl10" style="font-size: 16px; color: #fff;">0%</strong>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <span style="font-size: 10px; color: #94a3b8; display: block; margin-bottom: 3px;">Tgl 15</span>
+                        <strong id="lunas-tgl15" style="font-size: 16px; color: #fff;">0%</strong>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <span style="font-size: 10px; color: #94a3b8; display: block; margin-bottom: 3px;">Tgl 20</span>
+                        <strong id="lunas-tgl20" style="font-size: 16px; color: #fff;">0%</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+                    <!-- MULAI GRAFIK -->
+                    <div class="charts-grid">
+                        <div id="wadah-tren-pemasukan" class="chart-box">
+                            <h4>Tren Pemasukan (Tahun Ini)</h4>
+                            <div class="chart-container">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-box">
+                            <h3>Status Tagihan per Rute</h3>
+                            <div class="chart-container">
+        <canvas id="ruteChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- AKHIR GRAFIK -->
+                </div>
+
+                <!-- 2. Halaman Form Pendaftaran -->
+                <div id="page-form-pelanggan" class="page-section">
+                    <h2>Pendaftaran Pelanggan Baru</h2>
+                    <div class="card-white">
+                        <form id="formPelangganBaru" onsubmit="simpanDataPelanggan(event)">
+                            <div class="input-group full-width" style="background: rgba(0, 255, 209, 0.05); padding: 16px; border: 1px dashed var(--success); border-radius: 8px; margin-bottom: 20px;">
+                                <label style="color: var(--success); margin-bottom: 8px;"><i class="fa-solid fa-id-card"></i> Format Pembuatan ID Pelanggan (Profile)</label>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+    <div>
+        <small style="color:var(--text-muted); font-size:11px;">OLT No 1</small>
+        <input type="text" id="id_olt_no" placeholder="Misal: 0007" maxlength="4" required>
+    </div>
+    <div>
+        <small style="color:var(--text-muted); font-size:11px;">No Urut PSB</small>
+        <input type="text" placeholder="Otomatis" readonly style="background: var(--bg-card); cursor: not-allowed;">
+    </div>
+</div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>Nama Lengkap</label>
+                                    <input type="text" id="nama_lengkap" placeholder="Masukkan nama sesuai KTP" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>No. KTP / NIK</label>
+                                    <input type="number" id="no_ktp" placeholder="16 digit NIK" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>No. WhatsApp</label>
+                                    <input type="number" id="no_hp" placeholder="Contoh: 08123456789" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>User PPPoE (Mikrotik)</label>
+                                    <input type="text" id="user_pppoe" placeholder="Username login router" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Paket Abonemen (Rp)</label>
+                                    <input type="number" id="abonemen" placeholder="Contoh: 110000 (Tanpa titik)" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Rute Penarikan</label>
+                                    <select id="tgl_penarikan" required>
+                                        <option value="">-- Pilih Tanggal Penarikan --</option>
+                                        <option value="1">Tanggal 1</option>
+                                        <option value="10">Tanggal 10</option>
+                                        <option value="15">Tanggal 15</option>
+                                        <option value="20">Tanggal 20</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label>Tanggal Pasang Baru (PSB)</label>
+                                    <input type="date" id="tgl_psb" required>
+                                </div>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label>Alamat Lengkap</label>
+                                <textarea id="alamat" rows="2" placeholder="Nama jalan, RT/RW, Desa, Kecamatan" required></textarea>
+                            </div>
+                            
+                            <div class="input-group full-width location-box">
+                                <label>Titik Koordinat Lokasi</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="titik_koordinat" placeholder="Klik tombol untuk otomatis mengambil koordinat GPS" readonly required style="flex-grow: 1;">
+                                    <button type="button" class="btn-location" onclick="dapatkanKoordinat()"><i class="fa-solid fa-location-crosshairs"></i> Ambil Lokasi</button>
+                                </div>
+                                <small id="lokasiStatus" style="color: var(--text-muted); margin-top: 5px; display: block;">Pastikan GPS/Lokasi perangkat aktif.</small>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label>Foto KTP Pelanggan</label>
+                                <input type="file" id="foto_ktp" accept="image/*" capture="environment" required>
+                                <small style="color: var(--text-muted);">Tombol ini akan otomatis membuka kamera HP saat diklik.</small>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label>Catatan Tambahan (Opsional)</label>
+                                <textarea id="catatan_tambahan" rows="2" placeholder="Misal: Router ditaruh di ruang tamu, kabel sisa 5m"></textarea>
+                            </div>
+
+                            <div class="form-actions" style="display: flex; justify-content: flex-end; gap: 10px;">
+                                <button type="button" class="btn-location" style="background: var(--danger);" onclick="showPage('dashboard')"><i class="fa-solid fa-times"></i> Tutup</button>
+                                <button type="submit" class="btn-primary" style="width: 200px;"><i class="fa-solid fa-save"></i> Simpan Data</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 3. Halaman Data Pelanggan -->
+                <div id="page-data-pelanggan" class="page-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+                        <h2 style="margin-bottom: 0;">Data Pelanggan KDM Network</h2>
+                        <div style="position: relative; min-width: 280px; flex: 1; max-width: 400px;">
+                            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                            <input type="text" id="cari-pelanggan" onkeyup="saringTabel('cari-pelanggan', 'tabel-body-pelanggan')" placeholder="Cari nama, ID, HP, atau alamat..." style="padding: 10px 16px 10px 40px; background: var(--bg-card); width: 100%;">
+                        </div>
+                    </div>
+                    <div class="card-white" style="overflow-x: auto;">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>ID Pelanggan</th>
+                                    <th>No. HP</th>
+                                    <th>Alamat</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-body-pelanggan">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted);">
+                                        <i class="fa-solid fa-spinner fa-spin"></i> Memuat data dari server...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Halaman Cetak Nota -->
+                <div id="page-cetak-nota" class="page-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+                        <h2 style="margin-bottom: 0;">Cetak Nota Tagihan (Khusus Pelanggan Aktif)</h2>
+                        
+                        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                            <div style="position: relative; min-width: 220px;">
+                                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                <input type="text" id="cari-nota" onkeyup="saringTabel('cari-nota', 'tabel-body-nota')" placeholder="Cari pelanggan..." style="padding: 10px 16px 10px 38px; background: var(--bg-card); width: 100%;">
+                            </div>
+
+                            <select id="filter-tgl-nota" onchange="ambilDataNota()" style="width: auto; padding: 10px 16px; background: var(--bg-card);">
+                                <option value="semua">Semua Tanggal</option>
+                                <option value="1">Jatuh Tempo Tgl 1</option>
+                                <option value="10">Jatuh Tempo Tgl 10</option>
+                                <option value="15">Jatuh Tempo Tgl 15</option>
+                                <option value="20">Jatuh Tempo Tgl 20</option>
+                            </select>
+                            
+                            <button class="btn-primary" onclick="cetakSemuaNota()" style="background: var(--success); color: #0B0E27; font-weight: 800; padding: 10px 20px; box-shadow: 0 4px 15px rgba(0, 255, 209, 0.3);">
+                                <i class="fa-solid fa-print"></i> Print Semua (<span id="jumlah-nota-cetak">0</span> Pelanggan)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-white" style="overflow-x: auto;">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>ID Pelanggan</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>User PPPoE</th>
+                                    <th>Tgl Tagihan</th>
+                                    <th>Tagihan (Rp)</th>
+                                    <th>Aksi Cetak</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-body-nota">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted);">
+                                        Memuat daftar tagihan...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. Halaman Pembayaran Pelanggan (Menu Sendiri) -->
+                <div id="page-pembayaran" class="page-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+                        <h2 style="margin-bottom: 0;">Manajemen & Konfirmasi Pembayaran</h2>
+                        
+                        <!-- FILTER GANDA: TANGGAL & STATUS + SEARCH -->
+                        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                            <div style="position: relative; min-width: 220px;">
+                                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                <input type="text" id="cari-bayar" onkeyup="saringTabel('cari-bayar', 'tabel-body-pembayaran')" placeholder="Cari nama / ID..." style="padding: 10px 16px 10px 38px; background: var(--bg-card); width: 100%;">
+                            </div>
+
+                            <select id="filter-tgl-bayar" onchange="ambilDataPembayaran()" style="width: auto; padding: 10px 16px; background: var(--bg-card);">
+                                <option value="semua">Semua Rute Tanggal</option>
+                                <option value="1">Rute Tanggal 1</option>
+                                <option value="10">Rute Tanggal 10</option>
+                                <option value="15">Rute Tanggal 15</option>
+                                <option value="20">Rute Tanggal 20</option>
+                            </select>
+
+                            <select id="filter-status-bayar" onchange="ambilDataPembayaran()" style="width: auto; padding: 10px 16px; background: var(--bg-card);">
+                                <option value="semua">Semua Status</option>
+                                <option value="Menunggu Konfirmasi">⏳ Menunggu Konfirmasi</option>
+                                <option value="Belum Bayar">❌ Belum Bayar</option>
+                                <option value="Lunas">✅ Sudah Lunas</option>
+                            </select>
+
+                            <button class="btn-location" onclick="ambilDataPembayaran()" style="padding: 10px 16px;">
+                                <i class="fa-solid fa-rotate"></i> Refresh
+                            </button>
+                            
+                            <button class="btn-location" onclick="resetMassalBulanBaru()" style="padding: 10px 16px; background: var(--danger); color: white; border: none; margin-left: auto;">
+                                <i class="fa-solid fa-power-off"></i> Reset Rute Ini
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-white" style="overflow-x: auto;">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>ID Pelanggan</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>Tagihan (Rp)</th>
+                                    <th>Status Bayar</th>
+                                    <th>Link Tagihan</th>
+                                    <th>Bukti & Konfirmasi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-body-pembayaran">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted);">
+                                        Memuat data pembayaran...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 6. Halaman Pengaturan -->
+                <div id="page-pengaturan" class="page-section">
+                    <h2>Pengaturan Sistem</h2>
+                    <div class="card-white">
+                        <h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fa-solid fa-building-columns"></i> Pengaturan Rekening & QRIS Pembayaran</h3>
+                        <form id="formPengaturanRekening" onsubmit="simpanPengaturan(event)">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>No. DANA / OVO</label>
+                                    <input type="text" id="set_dana" placeholder="Contoh: 081234567890">
+                                </div>
+                                <div class="input-group">
+                                    <label>No. Rekening BCA</label>
+                                    <input type="text" id="set_bca" placeholder="Contoh: 8945106928 a.n Yunita">
+                                </div>
+                                <div class="input-group">
+                                    <label>No. Rekening BRI</label>
+                                    <input type="text" id="set_bri" placeholder="Masukkan No. Rekening BRI">
+                                </div>
+                                <div class="input-group">
+                                    <label>No. Rekening Mandiri</label>
+                                    <input type="text" id="set_mandiri" placeholder="Contoh: 144-00-20258650 a.n Ferry">
+                                </div>
+                            </div>
+
+                            <div class="input-group full-width" style="margin-top: 10px; background: rgba(0, 255, 209, 0.05); padding: 15px; border: 1px dashed var(--success); border-radius: 8px;">
+                                <label style="color: var(--success);"><i class="fa-solid fa-qrcode"></i> Upload Barcode/QRIS Baru (Mengganti yang lama)</label>
+                                <input type="file" id="set_qris" accept="image/*" style="background: white; color: black; margin-top: 8px;">
+                                <small style="color: var(--text-muted); display: block; margin-top: 5px;">* Kosongkan kolom ini jika tidak ingin mengubah foto barcode QRIS saat ini.</small>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                                <button type="submit" class="btn-primary" style="background: var(--warning); padding: 12px 24px; font-size: 14px;">
+                                    <i class="fa-solid fa-save"></i> Simpan Pengaturan
+                                </button>
+                            </div>
+                        </form>
+
+                        <hr style="border-top: 1px dashed var(--border-light); margin: 30px 0;">
+<!-- BATAS PEMISAH -->
+                        <hr style="border-top: 1px dashed var(--border-light); margin: 30px 0;">
+
+                        <h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fa-solid fa-server"></i> Integrasi API Mikrotik (VPN)</h3>
+                        <div style="background: rgba(0, 255, 209, 0.05); border: 1px dashed var(--success); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0;">Masukkan data VPN dan Akun API Mikrotik di sini. Sistem web KDM Network akan menggunakan jalur ini untuk mengeksekusi Auto-Isolir dan Buka Blokir secara otomatis.</p>
+                        </div>
+                        <form id="formPengaturanMikrotik" onsubmit="simpanPengaturanMikrotik(event)">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>IP / Host VPN</label>
+                                    <input type="text" id="set_mk_ip" placeholder="Contoh: id1.vpn.com">
+                                </div>
+                                <div class="input-group">
+                                    <label>Port API</label>
+                                    <input type="number" id="set_mk_port" placeholder="Biasanya: 8728" value="8728">
+                                </div>
+                                <div class="input-group">
+                                    <label>Username API</label>
+                                    <input type="text" id="set_mk_user" placeholder="User khusus API">
+                                </div>
+                                <div class="input-group">
+                                    <label>Password API</label>
+                                    <input type="password" id="set_mk_pass" placeholder="Password rahasia">
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                                <button type="submit" class="btn-primary" style="background: var(--success); color: #0B0E27; padding: 12px 24px; font-size: 14px; font-weight: 800;">
+                                    <i class="fa-solid fa-link"></i> Simpan Koneksi Mikrotik
+                                </button>
+                            </div>
+                        </form>
+                        <h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fa-solid fa-users-gear"></i> Manajemen Akun Karyawan</h3>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 300px; background: var(--bg-main); padding: 15px; border-radius: 8px; border: 1px solid var(--border-light);">
+                                <h4 style="margin-bottom: 15px; font-size: 14px;">Tambah Akun Pekerja</h4>
+                                <form id="formTambahUser" onsubmit="simpanAkunUser(event)">
+                                    <div class="input-group">
+                                        <label>Nama Lengkap (Pekerja)</label>
+                                        <input type="text" id="user_nama" placeholder="Contoh: Budi Santoso" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Username</label>
+                                        <input type="text" id="user_username" placeholder="Contoh: budi123" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Password</label>
+                                        <input type="password" id="user_password" placeholder="Buat sandi yang mudah" autocomplete="new-password" required>
+                                    </div>
+                                    <button type="submit" class="btn-primary" style="width: 100%;"><i class="fa-solid fa-user-plus"></i> Buat Akun</button>
+                                </form>
+                            </div>
+
+                            <div style="flex: 2; min-width: 300px; overflow-x: auto;">
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama & Jabatan</th>
+                                            <th>Username</th>
+                                            <th>Password</th>
+                                            <th>Hapus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabel-body-user">
+                                        <tr><td colspan="4" style="text-align: center;">Memuat daftar akun...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr style="border-top: 1px dashed var(--border-light); margin: 30px 0;">
+
+                        <!-- BATAS PEMISAH FITUR EXPORT -->
+                        <hr style="border-top: 1px dashed var(--border-light); margin: 30px 0;">
+
+                        <h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fa-solid fa-file-export"></i> Export Data Pelanggan (CSV)</h3>
+                        
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn-primary" style="background: var(--success); color: #0B0E27;" onclick="exportDataCSV('Semua')">
+                                <i class="fa-solid fa-download"></i> Semua Data
+                            </button>
+                            <button class="btn-primary" style="background: var(--warning); color: #0B0E27;" onclick="exportDataCSV('Aktif')">
+                                <i class="fa-solid fa-user-check"></i> Khusus Aktif
+                            </button>
+                            <button class="btn-primary" style="background: var(--danger); color: white;" onclick="exportDataCSV('Isolir')">
+                                <i class="fa-solid fa-user-slash"></i> Khusus Isolir
+                            </button>
+                            
+                            <!-- TOMBOL BARU UNTUK REKAP PEMBAYARAN -->
+                            <button class="btn-primary" style="background: #3B82F6; color: white;" onclick="exportTagihanCSV()">
+                                <i class="fa-solid fa-file-invoice-dollar"></i> Rekap Pembayaran
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========================================== -->
+<!-- HALAMAN CCTV / LOG AKTIVITAS (KHUSUS BOS)  -->
+<!-- ========================================== -->
+<div id="page-log-aktivitas" class="page-section">
+    <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <h2 style="color: var(--primary); margin: 0;"><i class="fa-solid fa-user-secret"></i> Rekam Jejak Karyawan</h2>
+        <p style="color: var(--text-muted); font-size: 13px; margin-top: 5px;">Pantau diam-diam semua aktivitas perubahan data oleh tim Anda.</p>
+    </div>
+
+    <div class="card-white">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                <thead>
+                    <tr style="background: #202654; color: #fff;">
+                        <th style="padding: 12px; border-bottom: 2px solid #2d3748; width: 25%;">Waktu Eksekusi</th>
+                        <th style="padding: 12px; border-bottom: 2px solid #2d3748; width: 20%;">Pekerja</th>
+                        <th style="padding: 12px; border-bottom: 2px solid #2d3748; width: 55%;">Aktivitas yang Dilakukan</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-body-log">
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 15px; color: var(--warning);">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Sedang memuat rekaman CCTV...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+        </main>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- LAYAR KHUSUS PELANGGAN (TANPA LOGIN - VIA LINK UNIK)  -->
+    <!-- ===================================================== -->
+    <div id="customer-pay-screen" class="screen" style="justify-content: center; align-items: center; padding: 20px; background: var(--bg-main);">
+        <div class="card-white" style="max-width: 480px; width: 100%; text-align: center; border-top: 4px solid var(--success); box-shadow: var(--shadow-md);">
+            <img src="logo.png" alt="Logo KDM" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
+            <h2 style="margin-bottom: 4px; color: var(--success);">KDM Network</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Portal Pembayaran Tagihan Internet Resmi</p>
+
+            <div style="background: var(--bg-main); padding: 16px; border-radius: var(--radius-md); text-align: left; margin-bottom: 20px; border: 1px solid var(--border-light);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                    <span style="color: var(--text-muted);">ID Pelanggan:</span>
+                    <strong id="pay-id" style="color: var(--primary);">-</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                    <span style="color: var(--text-muted);">Nama Pelanggan:</span>
+                    <strong id="pay-nama">-</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                    <span style="color: var(--text-muted);">Jatuh Tempo:</span>
+                    <span id="pay-tempo">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                    <span style="color: var(--text-muted);">Status Bulan Ini:</span>
+                    <span id="pay-status" class="badge-isolir">Belum Bayar</span>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed var(--border-light); margin: 12px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 14px; font-weight: 600;">Total Tagihan:</span>
+                    <span id="pay-nominal" style="font-size: 22px; font-weight: 800; color: var(--success);">Rp 0</span>
+                </div>
+            </div>
+
+            <div id="area-form-bayar">
+                <div style="background: #ffffff; color: #000; padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
+                    <p style="font-weight: 800; font-size: 14px; margin-bottom: 8px; color: #0B0E27;">SCAN QRIS (DANA / OVO / M-BANKING)</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=KDM-NETWORK-QRIS-STATIS" alt="QRIS KDM Network" style="width: 180px; height: 180px; margin: 0 auto 10px auto; display: block; border: 2px solid #eee; padding: 6px; border-radius: 8px;">
+                    <div style="font-size: 12px; background: #f4f6f9; padding: 10px; border-radius: 6px; text-align: left; line-height: 1.5;">
+                        <strong>Atau Transfer Manual ke Rekening:</strong><br>
+                        🏦 <strong>Mandiri:</strong> 144-00-20258650 (a.n Ferry Andhi S.)<br>
+                        🏦 <strong>BCA:</strong> 8945106928 (a.n Yunita)
+                    </div>
+                </div>
+
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <label style="color: var(--text-dark); display: block; margin-bottom: 8px;">
+                        <i class="fa-solid fa-camera" style="color: var(--primary);"></i> Wajib Upload Screenshot / Foto Bukti Transfer:
+                    </label>
+                    <input type="file" id="file_bukti_bayar" accept="image/*" onchange="cekFileBukti()">
+                </div>
+
+                <button id="btn-kirim-bukti" class="btn-primary" onclick="kirimBuktiPembayaran()" disabled style="width: 100%; opacity: 0.5; cursor: not-allowed;">
+                    <i class="fa-solid fa-paper-plane"></i> Pilih Foto Bukti Dulu...
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BANNER NOTIFIKASI MELAYANG -->
+    <div id="wa-notif-banner" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 99999; background: #141838; border-left: 6px solid #00FFD1; color: #fff; padding: 16px 20px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); max-width: 380px; cursor: pointer; transition: all 0.3s ease;" onclick="bukaDariNotif()">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="background: rgba(0, 255, 209, 0.15); color: #00FFD1; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+                <i class="fa-solid fa-bell fa-shake"></i>
+            </div>
+            <div>
+                <div style="font-size: 12px; color: #00FFD1; font-weight: 800; text-transform: uppercase;">Pembayaran Masuk Baru!</div>
+                <div id="wa-notif-text" style="font-size: 14px; font-weight: 600; margin-top: 2px;">Pelanggan telah mengirim bukti transfer.</div>
+                <div style="font-size: 11px; color: #8E96B7; margin-top: 4px;">Klik di sini untuk melihat & konfirmasi Lunas</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- MESIN PEMBUAT E-NOTA GAMBAR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+
+    <!-- MODAL EDIT PELANGGAN -->
+    <div id="modal-edit" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; justify-content: center; align-items: center; padding: 20px;">
+        <div class="card-white" style="width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; position: relative;">
+            <h2 style="color: var(--warning); margin-bottom: 20px;"><i class="fa-solid fa-pen-to-square"></i> Edit Data Pelanggan</h2>
+            <form id="formEditPelanggan" onsubmit="simpanEditPelanggan(event)">
+                <input type="hidden" id="edit_id_pelanggan">
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="edit_nama" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="input-group"><label>No. KTP / NIK</label><input type="number" id="edit_ktp" required></div>
+                    <div class="input-group"><label>No WhatsApp</label><input type="number" id="edit_hp" required></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="input-group"><label>User PPPoE</label><input type="text" id="edit_pppoe" required></div>
+                    <div class="input-group"><label>Abonemen (Rp)</label><input type="number" id="edit_abonemen" required></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="input-group">
+                        <label>Rute Tagihan (Tgl)</label>
+                        <select id="edit_tgl_penarikan" required>
+                            <option value="1">Tanggal 1</option><option value="10">Tanggal 10</option>
+                            <option value="15">Tanggal 15</option><option value="20">Tanggal 20</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><label>Tanggal PSB</label><input type="date" id="edit_psb" required></div>
+                </div>
+                <div class="input-group" style="margin-bottom: 12px;"><label>Alamat Lengkap</label><textarea id="edit_alamat" rows="2" required></textarea></div>
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <label>Titik Koordinat Lokasi</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="edit_koordinat" placeholder="Klik tombol untuk update koordinat" required style="flex-grow: 1;">
+                        <button type="button" class="btn-location" onclick="dapatkanKoordinatEdit()" style="background: var(--primary); color: white; border: none; padding: 10px 14px;">
+                            <i class="fa-solid fa-location-crosshairs"></i> Update GPS
+                        </button>
+                    </div>
+                    <small id="editLokasiStatus" style="color: var(--text-muted); margin-top: 5px; display: block;">Pastikan GPS perangkat aktif untuk memperbarui lokasi.</small>
+                </div>
+                
+                <!-- BAGIAN FOTO KTP YANG BARU -->
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <label>Foto KTP Saat Ini</label>
+                    <div style="margin-bottom: 8px;">
+                        <img id="preview_edit_ktp" src="" alt="Belum ada foto" style="max-width: 100%; height: auto; max-height: 200px; border-radius: 8px; border: 1px dashed var(--border-light); display: none;">
+                    </div>
+                    <label>Ganti Foto KTP (Opsional)</label>
+                    <input type="file" id="edit_foto_ktp" accept="image/*" capture="environment">
+                    <small style="color: var(--text-muted); font-size: 11px;">Biarkan kosong jika tidak ingin mengganti foto KTP.</small>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 20px;"><label>Catatan Tambahan</label><textarea id="edit_catatan" rows="2"></textarea></div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-location" style="background: var(--bg-main);" onclick="document.getElementById('modal-edit').style.display='none'">Batal</button>
+                    <button type="submit" class="btn-primary" style="background: var(--warning);"><i class="fa-solid fa-save"></i> Timpa & Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI LUNAS ADMIN -->
+    <div id="modal-lunas-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; justify-content: center; align-items: center; padding: 20px;">
+        <div class="card-white" style="width: 100%; max-width: 450px; position: relative; border-top: 4px solid var(--success);">
+            <h2 style="color: var(--success); margin-bottom: 8px;"><i class="fa-solid fa-camera"></i> Konfirmasi Terima Tunai</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Pelanggan: <strong id="lunas_nama_pelanggan" style="color: var(--text-dark);"></strong></p>
+            <form id="formLunasAdmin" onsubmit="prosesLunasAdmin(event)">
+                <input type="hidden" id="lunas_id_pelanggan">
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label>Wajib Foto Uang / Kuitansi Fisik</label>
+                    <input type="file" id="foto_bukti_admin" accept="image/*" capture="environment" required style="padding: 10px; background: rgba(0, 255, 209, 0.05); border: 1px dashed var(--success);">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-location" style="background: var(--danger); border:none; color:white;" onclick="document.getElementById('modal-lunas-admin').style.display='none'">Batal</button>
+                    <button type="submit" class="btn-primary" style="background: var(--success); color: #0B0E27;"><i class="fa-solid fa-check-double"></i> Simpan & Lunas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<!-- ========================================== -->
+<!-- MULAI KODE WIDGET AI ASISTEN KDM (AMAN)    -->
+<!-- ========================================== -->
+<style>
+  /* CSS khusus untuk Widget AI, tidak akan mengganggu CSS web utama */
+  #kdm-ai-container {
+    display: none; /* Tambahkan baris ini agar sembunyi di halaman login */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99999;
+  font-family: Arial, sans-serif;
+  }
+  #kdm-ai-button {
+    width: 60px;
+    height: 60px;
+    background-color: #ff007f; /* Menyesuaikan warna pink/magenta KDM */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+  }
+  #kdm-ai-button:hover {
+    transform: scale(1.1);
+  }
+  #kdm-ai-chatbox {
+    display: none; /* Disembunyikan awalnya */
+    width: 320px;
+    height: 450px;
+    background-color: #1e1e2d; /* Warna gelap dashboard KDM */
+    border: 1px solid #444;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+  #kdm-ai-header {
+    background-color: #ff007f;
+    color: white;
+    padding: 12px 15px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #kdm-ai-close {
+    cursor: pointer;
+    font-size: 18px;
+  }
+  #kdm-ai-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #151521;
+    color: white;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .kdm-msg-bot {
+    align-self: flex-start;
+    background-color: #2b2b40;
+    padding: 8px 12px;
+    border-radius: 0px 10px 10px 10px;
+    max-width: 80%;
+  }
+  .kdm-msg-user {
+    align-self: flex-end;
+    background-color: #ff007f;
+    padding: 8px 12px;
+    border-radius: 10px 0px 10px 10px;
+    max-width: 80%;
+  }
+  #kdm-ai-footer {
+    display: flex;
+    padding: 10px;
+    background-color: #1e1e2d;
+    border-top: 1px solid #333;
+  }
+  #kdm-ai-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    outline: none;
+    background-color: #151521;
+    color: white;
+  }
+  #kdm-ai-send {
+    background-color: #ff007f;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+</style>
+
+<div id="kdm-ai-container">
+  <!-- Kotak Chat -->
+  <div id="kdm-ai-chatbox">
+    <div id="kdm-ai-header">
+      <span>🤖 Asisten Data KDM</span>
+      <span id="kdm-ai-close">✖</span>
+    </div>
+    <div id="kdm-ai-body" id="chat-content">
+      <div class="kdm-msg-bot">Halo! Saya Asisten AI KDM. Ada data yang mau dicek hari ini?</div>
+    </div>
+    <div id="kdm-ai-footer">
+      <input type="text" id="kdm-ai-input" placeholder="Ketik perintah...">
+      <button id="kdm-ai-send">Kirim</button>
+    </div>
+  </div>
+  <!-- Tombol Bulat Melayang -->
+  <div id="kdm-ai-button">💬</div>
+</div>
+
+<script>
+  // JavaScript dibungkus agar variabelnya tidak mengganggu kode web asli
+  (function() {
+    const btnOpen = document.getElementById('kdm-ai-button');
+    const chatbox = document.getElementById('kdm-ai-chatbox');
+    const btnClose = document.getElementById('kdm-ai-close');
+    const btnSend = document.getElementById('kdm-ai-send');
+    const inputField = document.getElementById('kdm-ai-input');
+    const chatBody = document.getElementById('kdm-ai-body');
+
+    // Pengaman output chat: semua teks di-escape dulu sebelum masuk HTML
+    function escTeks(nilai) {
+      return String(nilai === null || nilai === undefined ? '' : nilai)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Buka chat
+    btnOpen.addEventListener('click', function() {
+      chatbox.style.display = 'flex';
+      btnOpen.style.display = 'none';
+    });
+
+    // Tutup chat
+    btnClose.addEventListener('click', function() {
+      chatbox.style.display = 'none';
+      btnOpen.style.display = 'flex';
+    });
+
+    // KIRIM PESAN KE AI GEMINI
+    btnSend.addEventListener('click', function() {
+      const text = inputField.value.trim();
+      if(text !== '') {
+        // 1. Tampilkan pesan admin
+        chatBody.innerHTML += '<div class="kdm-msg-user">' + escTeks(text).replace(/\n/g, '<br>') + '</div>';
+        inputField.value = '';
+        chatBody.scrollTop = chatBody.scrollHeight; // Auto scroll ke bawah
+        
+        // 2. Tampilkan status AI sedang berpikir (Loading)
+        const idLoading = "load-" + Date.now();
+        chatBody.innerHTML += '<div id="' + idLoading + '" class="kdm-msg-bot">⏳ Asisten sedang mengecek data...</div>';
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // 3. Link URL Google Apps Script Kakak (Sudah otomatis terpasang)
+        const urlGAS = "https://script.google.com/macros/s/AKfycbxAcHsQ8WDx8gCJYQjoyzjyi8CrTmENYncq_AjpYvXDBnsqrIf2-Q8a1O5bUCPRoGDR/exec";
+
+        // 4. Proses tembak data ke server GAS
+        fetch(urlGAS, {
+          method: 'POST',
+          body: JSON.stringify({ pesan: text })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Hapus tulisan loading
+          document.getElementById(idLoading).remove(); 
+          
+          // Tampilkan balasan AI (mengubah enter/newline jadi <br> agar rapi di HTML)
+          const balasanRapi = escTeks(data && data.balasan ? data.balasan : '').replace(/\n/g, '<br>');
+          chatBody.innerHTML += '<div class="kdm-msg-bot">' + balasanRapi + '</div>';
+          chatBody.scrollTop = chatBody.scrollHeight;
+        })
+        .catch(error => {
+          document.getElementById(idLoading).remove();
+          chatBody.innerHTML += '<div class="kdm-msg-bot">Waduh, koneksi ke server AI terputus nih bos. Coba lagi ya!</div>';
+          chatBody.scrollTop = chatBody.scrollHeight;
+        });
+      }
+    });
+
+    // Bisa kirim pakai tombol Enter di keyboard
+    inputField.addEventListener('keypress', function(e) {
+      if(e.key === 'Enter') {
+        btnSend.click();
+      }
+    });
+  })();
+</script>
+<!-- ========================================== -->
+<!-- AKHIR KODE WIDGET AI ASISTEN KDM           -->
+<!-- ========================================== -->
+</body>
+</html>
